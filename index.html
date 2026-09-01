@@ -119,13 +119,13 @@
     let html = '';
 
     if (years > 0 || yDiff > 0) {
-      html += `<div class="unit-block"><span class="unit-value">${yDiff}</span><span class="unit-label">سنة</span></div>`;
+      html += `<div class="unit-block"><span class="unit-value">${yDiff}</span><span class="unit-label">:</span></div>`;
     }
     if (months > 0 || mDiff > 0 || yDiff > 0) {
-      html += `<div class="unit-block"><span class="unit-value">${mDiff}</span><span class="unit-label">شهر</span></div>`;
+      html += `<div class="unit-block"><span class="unit-value">${mDiff}</span><span class="unit-label">:</span></div>`;
     }
     if (days > 0 || dDiff > 0 || mDiff > 0 || yDiff > 0) {
-      html += `<div class="unit-block"><span class="unit-value">${dDiff}</span><span class="unit-label">يوم</span></div>`;
+      html += `<div class="unit-block"><span class="unit-value">${dDiff}</span><span class="unit-label">:</span></div>`;
     }
 
     const formattedTime = `${String(hDiff).padStart(2, '0')}:${String(minDiff).padStart(2, '0')}:${String(sDiff).padStart(2, '0')}`;
