@@ -1,0 +1,53 @@
+<div class="timer-container">
+  <div class="timer-display" id="timerDisplay">00:00:00</div>
+</div>
+
+<style>
+  .timer-container {
+    background-color: #ffffff;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .timer-display {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: #000000;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+  }
+</style>
+
+<script>
+  // ==========================================
+  // حدد الوقت المطلوب هنا مباشرة:
+  // ==========================================
+  const HOURS = 1;    // عدد الساعات
+  const MINUTES = 29; // عدد الدقائق
+  const SECONDS = 23; // عدد الثواني
+  // ==========================================
+
+  let totalSeconds = (HOURS * 3600) + (MINUTES * 60) + SECONDS;
+
+  function updateDisplay() {
+    const hrs = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+
+    document.getElementById('timerDisplay').textContent = 
+      `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+
+  updateDisplay();
+
+  const timerInterval = setInterval(() => {
+    if (totalSeconds > 0) {
+      totalSeconds--;
+      updateDisplay();
+    } else {
+      clearInterval(timerInterval);
+    }
+  }, 1000);
+</script>
