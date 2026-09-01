@@ -1,53 +1,150 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Countdown Timer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #000000;
+    }
+    .timer-container {
+      background-color: #ffffff;
+      padding: 10px 20px;
+      text-align: center;
+    }
+    .timer-display {
+      font-size: 44px;
+      font-weight: 700;
+      color: #000000;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .unit-block {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 3px;
+    }
+    .unit-value {
+      font-weight: 700;
+    }
+    .unit-label {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333333;
+    }
+    .time-digital {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
 <div class="timer-container">
   <div class="timer-display" id="timerDisplay">00:00:00</div>
 </div>
 
-<style>
-  .timer-container {
-    background-color: #ffffff;
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .timer-display {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 48px;
-    font-weight: 700;
-    color: #000000;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.5px;
-  }
-</style>
-
 <script>
-  // ==========================================
-  // حدد الوقت المطلوب هنا مباشرة:
-  // ==========================================
-  const HOURS = 1;    // عدد الساعات
-  const MINUTES = 29; // عدد الدقائق
-  const SECONDS = 23; // عدد الثواني
-  // ==========================================
+  // 1. قراءة المعلمات (Parameters) من رابط الموقع
+  const params = new URLSearchParams(window.location.search);
 
-  let totalSeconds = (HOURS * 3600) + (MINUTES * 60) + SECONDS;
+  const years = parseInt(params.get('y') || params.get('years') || '0', 10);
+  const months = parseInt(params.get('m') || params.get('months') || '0', 10);
+  const days = parseInt(params.get('d') || params.get('days') || '0', 10);
+  const hours = parseInt(params.get('h') || params.get('hours') || '0', 10);
+  const minutes = parseInt(params.get('min') || params.get('minutes') || '0', 10);
+  const seconds = parseInt(params.get('s') || params.get('seconds') || '0', 10);
 
-  function updateDisplay() {
-    const hrs = Math.floor(totalSeconds / 3600);
-    const mins = Math.floor((totalSeconds % 3600) / 60);
-    const secs = totalSeconds % 60;
+  // 2. مفتاح فريد للتخزين المحلّي للحفاظ على وقت الانتهاء عند تحديث الصفحة
+  const storageKey = `timer_target_${years}_${months}_${days}_${hours}_${minutes}_${seconds}`;
+  let targetTime = localStorage.getItem(storageKey);
 
-    document.getElementById('timerDisplay').textContent = 
-      `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  if (!targetTime || params.get('reset') === 'true') {
+    const targetDate = new Date();
+    targetDate.setFullYear(targetDate.getFullYear() + years);
+    targetDate.setMonth(targetDate.getMonth() + months);
+    targetDate.setDate(targetDate.getDate() + days);
+    targetDate.setHours(targetDate.getHours() + hours);
+    targetDate.setMinutes(targetDate.getMinutes() + minutes);
+    targetDate.setSeconds(targetDate.getSeconds() + seconds);
+
+    targetTime = targetDate.getTime();
+    localStorage.setItem(storageKey, targetTime);
+  } else {
+    targetTime = parseInt(targetTime, 10);
   }
 
-  updateDisplay();
+  // 3. تحديث العداد
+  function updateTimer() {
+    const now = new Date().getTime();
+    const diff = targetTime - now;
 
-  const timerInterval = setInterval(() => {
-    if (totalSeconds > 0) {
-      totalSeconds--;
-      updateDisplay();
-    } else {
-      clearInterval(timerInterval);
+    if (diff <= 0) {
+      document.getElementById('timerDisplay').textContent = '00:00:00';
+      return;
     }
-  }, 1000);
+
+    const targetDateObj = new Date(targetTime);
+    const currentDateObj = new Date();
+
+    let yDiff = targetDateObj.getFullYear() - currentDateObj.getFullYear();
+    let mDiff = targetDateObj.getMonth() - currentDateObj.getMonth();
+    let dDiff = targetDateObj.getDate() - currentDateObj.getDate();
+    let hDiff = targetDateObj.getHours() - currentDateObj.getHours();
+    let minDiff = targetDateObj.getMinutes() - currentDateObj.getMinutes();
+    let sDiff = targetDateObj.getSeconds() - currentDateObj.getSeconds();
+
+    if (sDiff < 0) { sDiff += 60; minDiff--; }
+    if (minDiff < 0) { minDiff += 60; hDiff--; }
+    if (hDiff < 0) { hDiff += 24; dDiff--; }
+    if (dDiff < 0) {
+      const prevMonth = new Date(currentDateObj.getFullYear(), currentDateObj.getMonth(), 0);
+      dDiff += prevMonth.getDate();
+      mDiff--;
+    }
+    if (mDiff < 0) { mDiff += 12; yDiff--; }
+
+    let html = '';
+
+    // عرض السنوات إن وجدت
+    if (years > 0 || yDiff > 0) {
+      html += `<div class="unit-block"><span class="unit-value">${yDiff}</span><span class="unit-label">سنة</span></div>`;
+    }
+    // عرض الأشهر إن وجدت
+    if (months > 0 || mDiff > 0 || yDiff > 0) {
+      html += `<div class="unit-block"><span class="unit-value">${mDiff}</span><span class="unit-label">شهر</span></div>`;
+    }
+    // عرض الأيام إن وجدت
+    if (days > 0 || dDiff > 0 || mDiff > 0 || yDiff > 0) {
+      html += `<div class="unit-block"><span class="unit-value">${dDiff}</span><span class="unit-label">يوم</span></div>`;
+    }
+
+    // عرض الساعات والدقائق والثواني تنسيق رقمي حديث
+    const formattedTime = `${String(hDiff).padStart(2, '0')}:${String(minDiff).padStart(2, '0')}:${String(sDiff).padStart(2, '0')}`;
+    html += `<span class="time-digital">${formattedTime}</span>`;
+
+    document.getElementById('timerDisplay').innerHTML = html;
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
 </script>
+
+</body>
+</html>
