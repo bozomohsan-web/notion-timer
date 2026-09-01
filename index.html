@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Dynamic Countdown Timer</title>
@@ -13,7 +13,7 @@
       background-color: #ffffff;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       display: flex;
-      justify-content: flex-start;n
+      justify-content: flex-start;
       align-items: flex-start;
       color: #000000;
       padding: 4px;
@@ -27,9 +27,11 @@
       font-weight: 700;
       color: #000000;
       font-variant-numeric: tabular-nums;
-      letter-spacing: -0.5px;
-      direction: ltr;
-      display: inline-block;
+      letter-spacing: 0;
+      word-spacing: 0;
+      direction: ltr !important;
+      unicode-bidi: isolate;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -72,7 +74,7 @@
     const diff = targetTime - now;
 
     if (diff <= 0) {
-      document.getElementById('timerDisplay').textContent = '0:00:00:00';
+      document.getElementById('timerDisplay').textContent = '00:00:00:00';
       return;
     }
 
@@ -99,13 +101,13 @@
     let parts = [];
 
     if (years > 0 || yDiff > 0) {
-      parts.push(yDiff);
+      parts.push(String(yDiff).padStart(2, '0'));
     }
     if (months > 0 || mDiff > 0 || yDiff > 0) {
-      parts.push(parts.length > 0 ? String(mDiff).padStart(2, '0') : mDiff);
+      parts.push(String(mDiff).padStart(2, '0'));
     }
     if (days > 0 || dDiff > 0 || mDiff > 0 || yDiff > 0) {
-      parts.push(parts.length > 0 ? String(dDiff).padStart(2, '0') : dDiff);
+      parts.push(String(dDiff).padStart(2, '0'));
     }
 
     parts.push(String(hDiff).padStart(2, '0'));
