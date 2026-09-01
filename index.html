@@ -13,10 +13,26 @@
       background-color: #ffffff;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       display: flex;
+      flex-direction: column;
       justify-content: flex-start;
       align-items: flex-start;
       color: #000000;
       padding: 4px;
+    }
+    .timer-title {
+      width: 677.333px;
+      height: 40px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #000000;
+    }
+    .highlight-text {
+      background-color: #ffebe9;
+      padding: 2px 4px;
+      border-radius: 3px;
     }
     .timer-container {
       background-color: #ffffff;
@@ -36,6 +52,10 @@
   </style>
 </head>
 <body>
+
+<div class="timer-title">
+  <span class="highlight-text">The Duration:</span>
+</div>
 
 <div class="timer-container">
   <div class="timer-display" id="timerDisplay">00:00:00</div>
