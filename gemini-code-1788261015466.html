@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Countdown Timer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      color: #000000;
+      padding: 4px;
+    }
+    .timer-container {
+      background-color: #ffffff;
+      text-align: left;
+    }
+    .timer-display {
+      font-size: 28px;
+      font-weight: 700;
+      color: #000000;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.5px;
+      direction: ltr;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="timer-container">
+  <div class="timer-display" id="timerDisplay">00:00:00</div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+
+  const years = parseInt(params.get('y') || params.get('years') || '0', 10);
+  const months = parseInt(params.get('m') || params.get('months') || '0', 10);
+  const days = parseInt(params.get('d') || params.get('days') || '0', 10);
+  const hours = parseInt(params.get('h') || params.get('hours') || '0', 10);
+  const minutes = parseInt(params.get('min') || params.get('minutes') || '0', 10);
+  const seconds = parseInt(params.get('s') || params.get('seconds') || '0', 10);
+
+  const storageKey = `timer_target_${years}_${months}_${days}_${hours}_${minutes}_${seconds}`;
+  let targetTime = localStorage.getItem(storageKey);
+
+  if (!targetTime || params.get('reset') === 'true') {
+    const targetDate = new Date();
+    targetDate.setFullYear(targetDate.getFullYear() + years);
+    targetDate.setMonth(targetDate.getMonth() + months);
+    targetDate.setDate(targetDate.getDate() + days);
+    targetDate.setHours(targetDate.getHours() + hours);
+    targetDate.setMinutes(targetDate.getMinutes() + minutes);
+    targetDate.setSeconds(targetDate.getSeconds() + seconds);
+
+    targetTime = targetDate.getTime();
+    localStorage.setItem(storageKey, targetTime);
+  } else {
+    targetTime = parseInt(targetTime, 10);
+  }
+
+  function updateTimer() {
+    const now = new Date().getTime();
+    const diff = targetTime - now;
+
+    if (diff <= 0) {
+      document.getElementById('timerDisplay').textContent = '0:00:00:00';
+      return;
+    }
+
+    const targetDateObj = new Date(targetTime);
+    const currentDateObj = new Date();
+
+    let yDiff = targetDateObj.getFullYear() - currentDateObj.getFullYear();
+    let mDiff = targetDateObj.getMonth() - currentDateObj.getMonth();
+    let dDiff = targetDateObj.getDate() - currentDateObj.getDate();
+    let hDiff = targetDateObj.getHours() - currentDateObj.getHours();
+    let minDiff = targetDateObj.getMinutes() - currentDateObj.getMinutes();
+    let sDiff = targetDateObj.getSeconds() - currentDateObj.getSeconds();
+
+    if (sDiff < 0) { sDiff += 60; minDiff--; }
+    if (minDiff < 0) { minDiff += 60; hDiff--; }
+    if (hDiff < 0) { hDiff += 24; dDiff--; }
+    if (dDiff < 0) {
+      const prevMonth = new Date(currentDateObj.getFullYear(), currentDateObj.getMonth(), 0);
+      dDiff += prevMonth.getDate();
+      mDiff--;
+    }
+    if (mDiff < 0) { mDiff += 12; yDiff--; }
+
+    let parts = [];
+
+    if (years > 0 || yDiff > 0) {
+      parts.push(yDiff);
+    }
+    if (months > 0 || mDiff > 0 || yDiff > 0) {
+      parts.push(parts.length > 0 ? String(mDiff).padStart(2, '0') : mDiff);
+    }
+    if (days > 0 || dDiff > 0 || mDiff > 0 || yDiff > 0) {
+      parts.push(parts.length > 0 ? String(dDiff).padStart(2, '0') : dDiff);
+    }
+
+    parts.push(String(hDiff).padStart(2, '0'));
+    parts.push(String(minDiff).padStart(2, '0'));
+    parts.push(String(sDiff).padStart(2, '0'));
+
+    document.getElementById('timerDisplay').textContent = parts.join(':');
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
+</script>
+
+</body>
+</html>
