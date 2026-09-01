@@ -28,28 +28,8 @@
       color: #000000;
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.5px;
-      display: flex;
-      align-items: baseline;
-      justify-content: flex-start;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .unit-block {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 2px;
-    }
-    .unit-value {
-      font-weight: 700;
-    }
-    .unit-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #333333;
-    }
-    .time-digital {
-      font-family: system-ui, -apple-system, sans-serif;
-      font-weight: 700;
+      direction: ltr;
+      display: inline-block;
     }
   </style>
 </head>
@@ -92,7 +72,7 @@
     const diff = targetTime - now;
 
     if (diff <= 0) {
-      document.getElementById('timerDisplay').textContent = '00:00:00';
+      document.getElementById('timerDisplay').textContent = '0:00:00:00';
       return;
     }
 
@@ -116,22 +96,23 @@
     }
     if (mDiff < 0) { mDiff += 12; yDiff--; }
 
-    let html = '';
+    let parts = [];
 
     if (years > 0 || yDiff > 0) {
-      html += `<div class="unit-block"><span class="unit-value">${yDiff}</span><span class="unit-label">:</span></div>`;
+      parts.push(yDiff);
     }
     if (months > 0 || mDiff > 0 || yDiff > 0) {
-      html += `<div class="unit-block"><span class="unit-value">${mDiff}</span><span class="unit-label">:</span></div>`;
+      parts.push(parts.length > 0 ? String(mDiff).padStart(2, '0') : mDiff);
     }
     if (days > 0 || dDiff > 0 || mDiff > 0 || yDiff > 0) {
-      html += `<div class="unit-block"><span class="unit-value">${dDiff}</span><span class="unit-label">:</span></div>`;
+      parts.push(parts.length > 0 ? String(dDiff).padStart(2, '0') : dDiff);
     }
 
-    const formattedTime = `${String(hDiff).padStart(2, '0')}:${String(minDiff).padStart(2, '0')}:${String(sDiff).padStart(2, '0')}`;
-    html += `<span class="time-digital">${formattedTime}</span>`;
+    parts.push(String(hDiff).padStart(2, '0'));
+    parts.push(String(minDiff).padStart(2, '0'));
+    parts.push(String(sDiff).padStart(2, '0'));
 
-    document.getElementById('timerDisplay').innerHTML = html;
+    document.getElementById('timerDisplay').textContent = parts.join(':');
   }
 
   updateTimer();
