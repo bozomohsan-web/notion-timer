@@ -13,38 +13,37 @@
       background-color: #ffffff;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      justify-content: flex-start;
+      align-items: flex-start;
       color: #000000;
+      padding: 4px;
     }
     .timer-container {
       background-color: #ffffff;
-      padding: 10px 20px;
-      text-align: center;
+      text-align: left;
     }
     .timer-display {
-      font-size: 44px;
+      font-size: 28px;
       font-weight: 700;
       color: #000000;
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.5px;
       display: flex;
       align-items: baseline;
-      justify-content: center;
-      gap: 12px;
+      justify-content: flex-start;
+      gap: 6px;
       flex-wrap: wrap;
     }
     .unit-block {
       display: inline-flex;
       align-items: baseline;
-      gap: 3px;
+      gap: 2px;
     }
     .unit-value {
       font-weight: 700;
     }
     .unit-label {
-      font-size: 20px;
+      font-size: 14px;
       font-weight: 600;
       color: #333333;
     }
@@ -61,7 +60,6 @@
 </div>
 
 <script>
-  // 1. قراءة المعلمات (Parameters) من رابط الموقع
   const params = new URLSearchParams(window.location.search);
 
   const years = parseInt(params.get('y') || params.get('years') || '0', 10);
@@ -71,7 +69,6 @@
   const minutes = parseInt(params.get('min') || params.get('minutes') || '0', 10);
   const seconds = parseInt(params.get('s') || params.get('seconds') || '0', 10);
 
-  // 2. مفتاح فريد للتخزين المحلّي للحفاظ على وقت الانتهاء عند تحديث الصفحة
   const storageKey = `timer_target_${years}_${months}_${days}_${hours}_${minutes}_${seconds}`;
   let targetTime = localStorage.getItem(storageKey);
 
@@ -90,7 +87,6 @@
     targetTime = parseInt(targetTime, 10);
   }
 
-  // 3. تحديث العداد
   function updateTimer() {
     const now = new Date().getTime();
     const diff = targetTime - now;
@@ -122,20 +118,16 @@
 
     let html = '';
 
-    // عرض السنوات إن وجدت
     if (years > 0 || yDiff > 0) {
       html += `<div class="unit-block"><span class="unit-value">${yDiff}</span><span class="unit-label">سنة</span></div>`;
     }
-    // عرض الأشهر إن وجدت
     if (months > 0 || mDiff > 0 || yDiff > 0) {
       html += `<div class="unit-block"><span class="unit-value">${mDiff}</span><span class="unit-label">شهر</span></div>`;
     }
-    // عرض الأيام إن وجدت
     if (days > 0 || dDiff > 0 || mDiff > 0 || yDiff > 0) {
       html += `<div class="unit-block"><span class="unit-value">${dDiff}</span><span class="unit-label">يوم</span></div>`;
     }
 
-    // عرض الساعات والدقائق والثواني تنسيق رقمي حديث
     const formattedTime = `${String(hDiff).padStart(2, '0')}:${String(minDiff).padStart(2, '0')}:${String(sDiff).padStart(2, '0')}`;
     html += `<span class="time-digital">${formattedTime}</span>`;
 
