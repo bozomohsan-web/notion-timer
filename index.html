@@ -39,7 +39,7 @@
     }
     body.dark-mode .highlight-text {
       background-color: #3e2321;
-      color: #ffb3ad;
+      color: #ffffff;
     }
     .timer-container {
       background-color: transparent;
@@ -62,24 +62,25 @@
 
     .theme-toggle {
       position: fixed;
-      bottom: 6px;
-      left: 6px;
+      bottom: 2px;
+      left: 2px;
       background-color: #f0f0f0;
       border: 1px solid #ccc;
       border-radius: 4px;
       padding: 2px 6px;
-      font-size: 12px;
+      font-size: 11px;
       cursor: pointer;
       color: #333;
-      transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .theme-toggle:hover {
+      opacity: 0.6;
     }
     body.dark-mode .theme-toggle {
       background-color: #2d2d2d;
       border-color: #444;
       color: #fff;
-    }
-    .theme-toggle:hover {
-      opacity: 0.8;
     }
   </style>
 </head>
