@@ -17,6 +17,11 @@
       justify-content: flex-start;
       align-items: flex-start;
       padding: 4px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    body.dark-mode {
+      background-color: #191919;
+      color: #ffffff;
     }
     .timer-title {
       margin-bottom: 8px;
@@ -30,9 +35,14 @@
       font-size: 14px;
       font-weight: 700;
       color: #37352f;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    body.dark-mode .highlight-text {
+      background-color: #3e2321;
+      color: #ffb3ad;
     }
     .timer-container {
-      background-color: #ffffff;
+      background-color: transparent;
     }
     .timer-display {
       font-size: 28px;
@@ -44,6 +54,32 @@
       direction: ltr !important;
       unicode-bidi: isolate;
       white-space: nowrap;
+      transition: color 0.2s;
+    }
+    body.dark-mode .timer-display {
+      color: #ffffff;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      bottom: 6px;
+      left: 6px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #333;
+      transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
+    body.dark-mode .theme-toggle {
+      background-color: #2d2d2d;
+      border-color: #444;
+      color: #fff;
+    }
+    .theme-toggle:hover {
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -57,7 +93,24 @@
   <div class="timer-display" id="timerDisplay">00:00:00</div>
 </div>
 
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">🌙 Dark</button>
+
 <script>
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const currentTheme = localStorage.getItem('timer_theme');
+
+  if (currentTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    themeToggleBtn.textContent = '☀️ Light';
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('timer_theme', isDark ? 'dark' : 'light');
+    themeToggleBtn.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+  });
+
   const params = new URLSearchParams(window.location.search);
 
   const years = parseInt(params.get('y') || params.get('years') || '0', 10);
